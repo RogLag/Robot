@@ -1,10 +1,10 @@
 from machine import Pin
 import pycom
 from BME280 import *
-import asyncio
 import time
+import threading
 
-async def capteur():
+def capteur():
     while True :
         print("-----------------------")
         x = capteur_BME280.read_temp()
@@ -13,9 +13,8 @@ async def capteur():
         print("la pression est de : ", y)
         z = capteur_BME280.read_humidity()
         print("l'humidité est de : ",z)
-        await asyncio.sleep(5)
+        time.sleep(5)
         print("\n")
-    return None
 
 print("Robot init :\n")
 
@@ -31,7 +30,8 @@ capteur_BME280.Calibration_Param_Load()
 
 print("\nRobot ready")
 
-temp = capteur()
+capt = threading.Thread(target=capteur)
+capt.start()
 
 time.sleep(10)
 print("finish")
