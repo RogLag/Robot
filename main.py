@@ -1,6 +1,7 @@
 from machine import Pin,RTC
 import pycom
 from BME280 import *
+from DRV8833 import *
 import time
 import _thread
 
@@ -39,6 +40,14 @@ print ('Valeur Id_BME280 : ', hex (Id_BME280[0]))
 capteur_BME280 = BME280 (BME280_I2C_ADR, bus_i2c)
 capteur_BME280.Calibration_Param_Load()
 
+print("\nset PWM\n")
+DRV8833_Sleep_pin = "P20"
+DRV8833_AIN1 = "P22"
+DRV8833_AIN2 = "P21"
+
+print("\ninit motors\n")
+Moteur_Droit = DRV8833(DRV8833_AIN1,DRV8833_AIN2,DRV8833_Sleep_pin,1,500,0,1)
+
 print("\nset finish")
 
 print("\nRobot ready\n\n-----------------------\n")
@@ -68,4 +77,14 @@ while True :
 print("\n-----------------------\n")
 print("Robot start\n")
 _thread.start_new_thread(capteur, [delay,remaining])
-time.sleep(remaining+5)
+stop = time.time()+remaining
+"""New thread pour les moteurs (function)"""
+while time.time() < stop :
+    consigne_de_rotation_roue = 0.5
+    Moteur_Droit.Arret_moteur()
+    Moteur_Droit.Cmde_moteur(SENS_HORAIRE,consigne_de_rotation_roue)
+    time.sleep(1)
+    Moteur_Droit.Cmde_moteur(SENS_ANTI_HORAIRE,consigne_de_rotation_roue)
+    time.sleep(1)
+    Moteur_Droit.Arret_moteur()
+    time.sleep(0.5)
