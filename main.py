@@ -21,6 +21,50 @@ def capteur(delay,remaining):
         print("\n")
     print("finish")
 
+def avancer(vitesse):
+    consigne_rotation_roue = vitesse
+    Moteur_Droit.Cmde_moteur(SENS_HORAIRE,consigne_rotation_roue)
+    Moteur_Gauche.Cmde_moteur(SENS_ANTI_HORAIRE,consigne_rotation_roue)
+    time.sleep(1)
+    Moteur_Gauche.Arret_moteur()
+    Moteur_Droit.Arret_moteur()
+    return None
+
+def reculer(vitesse):
+    consigne_rotation_roue = vitesse
+    Moteur_Droit.Cmde_moteur(SENS_ANTI_HORAIRE,consigne_rotation_roue)
+    Moteur_Gauche.Cmde_moteur(SENS_HORAIRE,consigne_rotation_roue)
+    time.sleep(1)
+    Moteur_Gauche.Arret_moteur()
+    Moteur_Droit.Arret_moteur()
+    return None
+
+def tourner_droite(vitesse):
+    consigne_rotation_roue = vitesse
+    Moteur_Droit.Cmde_moteur(SENS_HORAIRE,consigne_rotation_roue)
+    Moteur_Gauche.Cmde_moteur(SENS_HORAIRE,consigne_rotation_roue)
+    time.sleep(1)
+    Moteur_Gauche.Arret_moteur()
+    Moteur_Droit.Arret_moteur()
+    return None
+
+def tourner_gauche(vitesse):
+    consigne_rotation_roue = vitesse
+    Moteur_Droit.Cmde_moteur(SENS_ANTI_HORAIRE,consigne_rotation_roue)
+    Moteur_Gauche.Cmde_moteur(SENS_ANTI_HORAIRE,consigne_rotation_roue)
+    time.sleep(1)
+    Moteur_Gauche.Arret_moteur()
+    Moteur_Droit.Arret_moteur()
+    return None
+
+def deplacement(remaining):
+    start = time.time()
+    while time.time() < start+remaining:
+        avancer(1)
+        reculer(1)
+        tourner_droite(1)
+        tourner_gauche(1)
+
 print("\n-----------------------\n")
 print("Robot init :\n")
 
@@ -42,11 +86,14 @@ capteur_BME280.Calibration_Param_Load()
 
 print("\nset PWM\n")
 DRV8833_Sleep_pin = "P20"
-DRV8833_AIN1 = "P22"
-DRV8833_AIN2 = "P21"
+DRV8833_AIN1 = "P21"
+DRV8833_AIN2 = "P22"
+DRV8833_BIN1 = "P12"
+DRV8833_BIN2 = "P19"
 
 print("\ninit motors\n")
-Moteur_Droit = DRV8833(DRV8833_AIN1,DRV8833_AIN2,DRV8833_Sleep_pin,1,500,0,1)
+Moteur_Droit = DRV8833(DRV8833_AIN1, DRV8833_AIN2,DRV8833_Sleep_pin, 1, 500, 0, 1)
+Moteur_Gauche = DRV8833(DRV8833_BIN1, DRV8833_BIN2,DRV8833_Sleep_pin, 1, 500, 2, 3)
 
 print("\nset finish")
 
@@ -76,15 +123,16 @@ while True :
 
 print("\n-----------------------\n")
 print("Robot start\n")
-_thread.start_new_thread(capteur, [delay,remaining])
 stop = time.time()+remaining
-"""New thread pour les moteurs (function)"""
-while time.time() < stop :
-    consigne_de_rotation_roue = 0.5
-    Moteur_Droit.Arret_moteur()
-    Moteur_Droit.Cmde_moteur(SENS_HORAIRE,consigne_de_rotation_roue)
-    time.sleep(1)
-    Moteur_Droit.Cmde_moteur(SENS_ANTI_HORAIRE,consigne_de_rotation_roue)
-    time.sleep(1)
-    Moteur_Droit.Arret_moteur()
-    time.sleep(0.5)
+now = time.time()
+_thread.start_new_thread(capteur, [delay,remaining])
+_thread.start_new_thread(avancer, [1])
+time.sleep(2)
+_thread.start_new_thread(reculer, [1])
+time.sleep(2)
+_thread.start_new_thread(tourner_droite, [1])
+time.sleep(2)
+_thread.start_new_thread(tourner_gauche, [1])
+time.sleep(2)
+now = time.time()
+print("motors finish")
