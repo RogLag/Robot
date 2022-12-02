@@ -38,8 +38,10 @@ def capteur():
     print("la pression est de : ", y)
     z = capteur_BME280.read_humidity()
     print("l'humidité est de : ",z)
+    lum = capteur_d_1_VL6180X.ambiant_light_mesure()
+    print("la luminosité est de : ",lum)
     print("\n")
-    write_SD("Time : "+str(date[2])+"/"+str(date[1])+"/"+str(date[0])+" at "+str(date[3])+":"+str(date[4])+":"+str(date[5])+" la température est de : "+str(x)+" la pression est de : "+str(y)+" l'humidité est de : "+str(z)+"\n")
+    write_SD("Time : "+str(date[2])+"/"+str(date[1])+"/"+str(date[0])+" at "+str(date[3])+":"+str(date[4])+":"+str(date[5])+" la température est de : "+str(x)+" la pression est de : "+str(y)+" l'humidité est de : "+str(z)+" la luminosité est de : "+str(lum))
     #bluetooth.send_data(f"Time : {date[2]}/{date[1]}/{date[0]} at {date[3]}:{date[4]}:{date[5]}\nla température est de : {x}\nla pression est de : {y}\nl'humidité est de : {z}")
 
 def avancer(vitesse):
@@ -140,7 +142,7 @@ print("\nset finish")
 
 print("\nRobot ready\n\n-----------------------\n")
 
-delay = 5.0
+delay = 4.0
 print("\n")
 
 print("\n-----------------------\n")
@@ -148,7 +150,7 @@ print("Robot start\n")
 
 
 "Si la distance est inférieur à 75cm, le robot tourne jusqu'à ce que la distance soit supérieur à 75cm"
-"Toutes les 10 secondes, le robot envoie les données de la température, de la pression et de l'humidité"
+"Toutes les 4 secondes, le robot envoie les données de la température, de la pression et de l'humidité"
 
 last_time = time.time()
 
